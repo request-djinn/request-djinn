@@ -1,2 +1,2 @@
 # request-djinn
-An HTTP webhook inspector
+An HTTP webhook inspector.
