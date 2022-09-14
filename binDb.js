@@ -12,17 +12,24 @@ const requestSchema = new Schema({
     required: true
   },
  body: {
-    type: String, // is this JSON or just string?
+    type: Object, // is this JSON or just string? // Aryan -> (I would say JSON)
   }
 });
 
 
 
-//create model
+// Create model
 const Request = mongoose.model('requests', requestSchema);
 
 module.exports = Request;
 
+
+
+
+
+
+
+// PROBABLY TO BE DELETED 
 // could all of the required ones go into a requiredHeaders attribute so we just reduce the size?
 // binKey: {
 //   type: String,
