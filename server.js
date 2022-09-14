@@ -61,6 +61,36 @@ app.get("/bin/:binId/requests", (req, res) => {
 
 
 
+
+
+
+
+
+// Given headers object, returns subdomain string
+
+let testObj = {
+  'connection': 'upgrade',
+'host': 'jordansbin.request-djinn.com',
+'upgrade-insecure-requests': '1',
+'user-agent':
+ 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36',
+'accept':
+ 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+'sec-gpc': '1',
+'accept-language': 'en-US,en;q=0.8',
+'accept-encoding': 'gzip, deflate' }
+
+function getSubdomain(headersObj) {
+  let splitHost = headersObj.host.split('.');
+  return splitHost[0];
+}
+
+console.log(getSubdomain(testObj)) // 'jordansbin'
+
+
+
+
+
 // initial tests
 
 
