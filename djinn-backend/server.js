@@ -35,11 +35,13 @@ app.post('/bin', (req, res) => {
   console.log('got here')
   let newBinKey = makeHash();
   // create psql record with binKey and subdomain
-
   res.status(201).send({ status: 201, binKey: newBinKey });
-
   // res.status(404).send('Sorry, we cannot find that!')
 });
+
+// GET TO ‘/bin/:binId/requests’	{status: 200, requests: array of json objects}	
+// {status: 400, error: malformed request} 	array of json objs
+
 
 // initial tests
 let testInsert = {
