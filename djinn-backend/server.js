@@ -3,19 +3,43 @@ const PORT = 3001;
 const app = express();
 const mongoose = require('mongoose');
 // const mongoDb = require("Request");
-const Request = require('../binDb.js');
+const Request = require('./binDb.js');
+const hash = require('object-hash');
 
 const doc = new Request();
 console.log(Request, doc);
 
+
+// connecting to mongo: mongoose.connect
+// Mongoose will not throw any errors by default if you use a model without connecting.
+// db = mongoose.connection (after this, test db connection and errors)
+
+// console.log(hash([1, 2, 2.718, 3.14159]));
+// console.log(hash([Math.random(), Math.random()]));
 /*
-connecting to mongo: mongoose.connect
-Mongoose will not throw any errors by default if you use a model without connecting.
-db = mongoose.connection (after this, test db connection and errors)
+// Request to create a bin
+Receive post request to create bin
+create unique bin id
+create record on psql
+mongo created automatically
+if successful return binKey and {status: 201, binKey: binKey}
+else return {status: 400, error: malformed request} 
+*/
 
+// app.use('/request-type', (req, res, next) => {
+//   console.log('Request type: ', req.method);
+//   next();
+// });
 
+app.post('/bin', (req, res) => {
+  console.log('got here')
+  let newBinKey = makeHash();
+  // create psql record with binKey and subdomain
 
-*/ 
+  res.status(201).send({ status: 201, binKey: newBinKey });
+
+  // res.status(404).send('Sorry, we cannot find that!')
+});
 
 // initial tests
 let testInsert = {
@@ -27,22 +51,22 @@ let testInsert = {
   xRequestId: 'unknown'
 }
 
-doc.insertOne(testInsert);
+// doc.insertOne(testInsert);
 // console.log(Request.findOne());
 
-app.use((req, res, next) => {
-  console.log('Time: ', Date.now());
-  next();
-});
+// app.use((req, res, next) => {
+//   console.log('Time: ', Date.now());
+//   next();
+// });
 
-app.use('/request-type', (req, res, next) => {
-  console.log('Request type: ', req.method);
-  next();
-});
+// app.use('/request-type', (req, res, next) => {
+//   console.log('Request type: ', req.method);
+//   next();
+// });
 
-app.get('/', (req, res) => {
-  res.send('Success!');
-});
+// app.get('/', (req, res) => {
+//   res.send('Success!');
+// });
 
 app.listen(3001, () => console.log('App is listening on port 3001'));
 
@@ -52,23 +76,27 @@ app.listen(3001, () => console.log('App is listening on port 3001'));
 // GET BIN FUNCTION
 // GET TO ‘/bin/:binId’
 
-<<<<<<< Updated upstream
+// <<<<<<< Updated upstream
 // Given headers object, returns subdomain string
+
+
+
+
+// Helper Functions
 
 function getSubdomain(headersObj) {
   let splitHost = headersObj.host.split('.');
   return splitHost[0]; // guard clause in case this doesn't exist?
 }
 
-<<<<<<< HEAD
-console.log(getSubdomain(testObj)) // 'jordansbin'
+function makeHash() {
+  return hash([Math.random(), Math.random()]);
+}
+
+// console.log(getSubdomain(testObj)) // 'jordansbin'
 
 
 
-=======
-// GET REQUESTS FOR A GIVEN BINID
-// GET TO ‘/bin/:binId/requests’
->>>>>>> Stashed changes
 
 // store document
 // print entire document out
@@ -101,26 +129,4 @@ MongoClient.connect(url, function(err, db) {
   requestMethod: 'HTTP',
   xRequestId: 'unknown'
 }
-
-
 */
-=======
-// initial tests
->>>>>>> 980ad2416aecb52d02172d5a66bce6e48d7198f2
-
-// app.post("/bin", (req, res) => {
-//   console.log(res);
-//   // json stringify the headers,
-//   // 
-// });
-
-// app.get("/bin/:binId", (req, res) => {
-//   console.log(res);
-// });
-
-// app.get("/bin/:binId/requests", (req, res) => {
-//   console.log(res);
-// });
-
-
-// 
