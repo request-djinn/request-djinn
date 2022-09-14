@@ -2,15 +2,15 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const requestSchema = new Schema({
-  contentId : {
-    type: Number,
+  contentId: {
+    type: String,
     required: true,
     unique: true
   },
-  allHeaders: {
+  headers: {
     type: Array,
     required: true
-  },
+  }, // url needs to go into postgres to find binkey, then get requests from mongo.
  body: {
     type: Object, // is this JSON or just string? // Aryan -> (I would say JSON)
   }
