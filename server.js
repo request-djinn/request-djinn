@@ -1,8 +1,12 @@
 const express = require('express');
-const PORT = 3000;
+const PORT = 3001;
 const app = express();
 const mongoose = require('mongoose');
+// const mongoDb = require("Request");
+const Request = require('./binDb.js');
 
+const doc = new Request();
+// console.log(Request, doc);
 // CREATE BIN
 // POST TO ‘/bin’
 
@@ -15,6 +19,29 @@ const mongoose = require('mongoose');
 // store document
 // print entire document out
 // 
+let testInsert = {
+  contentId: 87,
+  binKey: '6653ert',
+  Host: 'aryan.request-djinn.com',
+  fromIp: '44.388.596',
+  requestMethod: 'HTTP',
+  xRequestId: 'unknown'
+}
+
+doc.save(testInsert);
+// console.log(Request.findOne());
+/*
+
+{contentId: 'ajsdjksbfn',
+  binKey: '6653ert',
+  Host: 'aryan.request-djinn.com',
+  fromIp: '44.388.596',
+  requestMethod: 'HTTP',
+  xRequestId: 'unknown'
+}
+
+
+*/
 
 app.post("/bin", (req, res) => {
   console.log(res);
@@ -51,5 +78,5 @@ app.get("/bin/:binId/requests", (req, res) => {
 //   res.send('Success!');
 // });
 
-// app.listen(3000, () => console.log('App is listening on port 3000'));
+// app.listen(3001, () => console.log('App is listening on port 3001'));
 
