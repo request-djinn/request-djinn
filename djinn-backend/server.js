@@ -3,7 +3,7 @@ const PORT = 3001;
 const app = express();
 const mongoose = require('mongoose');
 // const mongoDb = require("Request");
-const Request = require('./binDb.js');
+const Request = require('../binDb.js');
 
 const doc = new Request();
 console.log(Request, doc);
