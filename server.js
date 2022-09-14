@@ -55,23 +55,12 @@ app.listen(3001, () => console.log('App is listening on port 3001'));
 <<<<<<< Updated upstream
 // Given headers object, returns subdomain string
 
-let testObj = {
-  'connection': 'upgrade',
-'host': 'jordansbin.request-djinn.com',
-'upgrade-insecure-requests': '1',
-'user-agent':
- 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36',
-'accept':
- 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-'sec-gpc': '1',
-'accept-language': 'en-US,en;q=0.8',
-'accept-encoding': 'gzip, deflate' }
-
 function getSubdomain(headersObj) {
   let splitHost = headersObj.host.split('.');
   return splitHost[0]; // guard clause in case this doesn't exist?
 }
 
+<<<<<<< HEAD
 console.log(getSubdomain(testObj)) // 'jordansbin'
 
 
@@ -115,6 +104,9 @@ MongoClient.connect(url, function(err, db) {
 
 
 */
+=======
+// initial tests
+>>>>>>> 980ad2416aecb52d02172d5a66bce6e48d7198f2
 
 // app.post("/bin", (req, res) => {
 //   console.log(res);
