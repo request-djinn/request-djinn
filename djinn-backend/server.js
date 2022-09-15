@@ -49,6 +49,7 @@ app.all('/', async(req, res) =>  {
   try {
     const subdomain = req.headers.host;
     let binKey = await getBinKey(subdomain);
+    console.log("binKey", binKey);
     // let binKey = "7109d4462970d8b413b0ff1bdc9d362c85b1177b"
     // if (binKey === null || binKey == undefined) {
     //   res.status(400).send({status: 400, error: 'malformed request'});
@@ -74,7 +75,7 @@ app.all('/', async(req, res) =>  {
 app.get('/bin/:binKey/requests', async(req, res) => {
   // const matchingRequests = await Model.find(binKey: binId);
   const binKey = await req.params.binKey;
-  console.log(binKey);
+
   const matchingRequests = Request.find({binKey: binKey}, (error, data) => {
     if(error) {
       console.log(error) // delete
