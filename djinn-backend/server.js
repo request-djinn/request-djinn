@@ -98,7 +98,7 @@ function makeHash() {
   return hash([Math.random(), Math.random()]);
 }
 
-function parseReqNewBin(request, binKey, endPoint) {
+function parseReqNewBin(request, binkey, endPoint) {
   const timestamp = getTimeStamp();
   return [binkey, timestamp, endPoint, timestamp, 0];
 }
