@@ -1,11 +1,41 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import {  createBrowserRouter, RouterProvider } from 'react-router-dom';
+
+import setLocalStorage from './dev/setLS';
+
+import Home from './routes/root'
+import ErrorPage from './routes/error-page';
+import Requests from './routes/requests';
+import Bins from './routes/bins';
+
+setLocalStorage();
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Home />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: "bins/:binId/requests",
+        element: <Requests />
+      }
+    ]
+  },
+  {
+    path: '/bins',
+    element: <Bins />,
+    errorElement: <ErrorPage/>
+  },
+]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
+
+
 root.render(
   // <React.StrictMode>
-    <App />
+   <RouterProvider router={router} />
   // </React.StrictMode>
 );
 

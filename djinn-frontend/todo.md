@@ -30,3 +30,16 @@ For Page Routing (later):
   
 
 - Use React Router in our index.js file to navigate between the different pages and render the component listed above accordingly.
+
+
+React Router Structure:
+
+- root
+  - Navigation component
+  - Home Page component (child)
+
+- Bins
+  - List of bins
+
+- Requests
+ - List of Requests
