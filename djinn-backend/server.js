@@ -119,6 +119,7 @@ async function getBinKey(subdomain) {
 
 async function insertData(sqlArr) {
   try {
+    console.log("IM HERE IN INSERTREQUEST")
     const [binkey, createdTime, endPoint, last, count] = sqlArr;
     const res = await pool.query(
        "INSERT INTO bins (binkey, createdTime, endPoint, last, count) VALUES ($1, $2, $3, $4, $5)", sqlArr
@@ -130,7 +131,7 @@ async function insertData(sqlArr) {
 }
 
 async function insertRequest(req, binKey, reqId) {
-  console.log("IM HERE IN INSERTREQUEST")
+
   const request = new Request ({
     requestId: reqId, // do we need stringify here? not sure
     binKey: binKey,
