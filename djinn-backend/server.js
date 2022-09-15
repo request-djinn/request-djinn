@@ -3,94 +3,126 @@ const PORT = 3001;
 const app = express();
 const mongoose = require('mongoose');
 // const mongoDb = require("Request");
-const Request = require('../binDb.js');
+const Request = require('./binDb.js');
+const hash = require('object-hash');
+// const { Pool } = require('pg');
+const { pool } = require("./relationalDb.js");
+const bodyParser = require('body-parser');
 
 const doc = new Request();
 console.log(Request, doc);
 
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// connecting to mongo: mongoose.connect
+// Mongoose will not throw any errors by default if you use a model without connecting.
+// db = mongoose.connection (after this, test db connection and errors)
+
+// console.log(hash([1, 2, 2.718, 3.14159]));
+// console.log(hash([Math.random(), Math.random()]));
+
+// Request to create a bin
+app.post('/bin', (req, res) => {
+  try {
+    let newBinKey = makeHash();
+    let endPoint = 'http://' + makeHash() + '.request-djinn.com';
+    let sqlArr = parseReqNewBin(req, newBinKey, endPoint);
+    insertData(sqlArr);
+    res.status(201).send({ status: 201, binKey: newBinKey, endPoint: endPoint });
+  } catch (error) {
+    res.status(400).send({ status: 400, error: 'malformed request'});
+  }
+});
+
+// Handle all webhook requests
+app.all('/', (req, res) =>  {
+  // console.log(req.method)
+  const subdomain = req.headers.host;
+  let binKey = getBinKey("http://11f77dc318b8e78a2c67f9eea7697f7345866165.request-djinn.com")
+  // store in mongo accordingly.
+  // if binKey doesn't exist; return 400
+  // if domain/url doesn't exist, return 400
+});
+
+// function binRequest
+// console.log(JSON.stringify(request.body, null, 2));
+
+// Accepting a webhook req	HTTPMethod to *.request-djinn.com	{status: 200, timestamp: timestamp}	n/a
 /*
-connecting to mongo: mongoose.connect
-Mongoose will not throw any errors by default if you use a model without connecting.
-db = mongoose.connection (after this, test db connection and errors)
-
-
-
+app.get("///", (req, res) => {
+  try {
+    pool.connect(async (error, client, release) => {
+      let confirmed = await client.query()
+    })
+  }
+})
 */ 
 
-// initial tests
-let testInsert = {
-  contentId: 87,
-  binKey: '6653ert',
-  Host: 'aryan.request-djinn.com',
-  fromIp: '44.388.596',
-  requestMethod: 'HTTP',
-  xRequestId: 'unknown'
+app.listen(PORT, () => console.log('App is listening on port 3001'));
+
+// Helper Functions
+
+// function getSubdomain(headersObj) {
+//   let splitHost = headersObj.host.split('.');
+//   return splitHost[0]; // guard clause in case this doesn't exist?
+// }
+
+
+
+function makeHash() {
+  return hash([Math.random(), Math.random()]);
 }
 
-doc.insertOne(testInsert);
-// console.log(Request.findOne());
-
-app.use((req, res, next) => {
-  console.log('Time: ', Date.now());
-  next();
-});
-
-app.use('/request-type', (req, res, next) => {
-  console.log('Request type: ', req.method);
-  next();
-});
-
-app.get('/', (req, res) => {
-  res.send('Success!');
-});
-
-app.listen(3001, () => console.log('App is listening on port 3001'));
-
-// CREATE BIN
-// POST TO ‘/bin’
-
-// GET BIN FUNCTION
-// GET TO ‘/bin/:binId’
-
-<<<<<<< Updated upstream
-// Given headers object, returns subdomain string
-
-function getSubdomain(headersObj) {
-  let splitHost = headersObj.host.split('.');
-  return splitHost[0]; // guard clause in case this doesn't exist?
+function parseReqNewBin(request, binKey, endPoint) {
+  const timestamp = getTimeStamp();
+  return [binKey, timestamp, endPoint, timestamp, 0];
 }
 
-<<<<<<< HEAD
-console.log(getSubdomain(testObj)) // 'jordansbin'
+function getTimeStamp() {
+  return new Date(Date.now()).toISOString();
+}
 
+async function getBinKey(subdomain) {
+  try {
+    const res = await pool.query("SELECT binkey FROM bins WHERE endPoint = $1", [subdomain]);
+    return res.rows[0].binkey;
+  } catch (error) {
+    console.error(error);
+  }
+}
 
+async function insertData(sqlArr) {
+  try {
+    const [binkey, createdTime, endPoint, last, count] = sqlArr;
+    const res = await pool.query(
+       "INSERT INTO bins (binkey, createdTime, endPoint, last, count) VALUES ($1, $2, $3, $4, $5)", sqlArr
+    );
+    console.log(`Added a row`);
+  } catch (error) {
+    console.error(error)
+  }
+}
 
-=======
-// GET REQUESTS FOR A GIVEN BINID
-// GET TO ‘/bin/:binId/requests’
->>>>>>> Stashed changes
+mongoose.connect(process.env.MONGODB_URL)
+const db = mongoose.connection;
+db.on('error', (error) => console.error(error));
+db.once('open', () => console.log('Connected to MongoDB'));
 
-// store document
-// print entire document out
-// 
+// finding a  bin id for documents in mongo
+doc.find({ contentId: binId }); // binId found from app.all()
 
-/*
-12:50 9/14
-inserting a doc:
-var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017/";
+// add headers and body to doc?
 
-MongoClient.connect(url, function(err, db) {
-  if (err) throw err;
-  var dbo = db.db("mydb");
-  var myobj = { name: "Company Inc", address: "Highway 37" };
-  dbo.collection("customers").insertOne(myobj, function(err, res) {
-    if (err) throw err;
-    console.log("1 document inserted");
-    db.close();
-  });
-});
-*/
+// on the get, findallbyID so all associated requests are displayed.
+
+// i need a variable that stores headers
+// i need a variable that stores body
+// i need to get the bin ID
+
+const request = new Request ({
+  contentId: req.binID
+})
+
 
 /*
 
@@ -101,26 +133,4 @@ MongoClient.connect(url, function(err, db) {
   requestMethod: 'HTTP',
   xRequestId: 'unknown'
 }
-
-
 */
-=======
-// initial tests
->>>>>>> 980ad2416aecb52d02172d5a66bce6e48d7198f2
-
-// app.post("/bin", (req, res) => {
-//   console.log(res);
-//   // json stringify the headers,
-//   // 
-// });
-
-// app.get("/bin/:binId", (req, res) => {
-//   console.log(res);
-// });
-
-// app.get("/bin/:binId/requests", (req, res) => {
-//   console.log(res);
-// });
-
-
-// 
