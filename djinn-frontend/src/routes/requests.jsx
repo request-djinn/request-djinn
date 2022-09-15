@@ -24,8 +24,8 @@ const Requests = () => {
     return(
       <div>
         <Navigation />
-        <h1>Requests for: PLACE SUBDOMAIN HERE</h1>
-        {requests.length === 0 ? <h2>No Requests Yet!</h2> :
+        <h1 class="p-4">Requests for: PLACE SUBDOMAIN HERE</h1>
+        {requests.length === 0 ? <h2 class="p-4">No Requests Yet!</h2> :
           requests.map(req => {
             return <Request request={req}/>
           })

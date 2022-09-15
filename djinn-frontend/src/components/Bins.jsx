@@ -15,13 +15,14 @@ const Bins = () => {
   }
   console.log(bins)
   return(
-    <div>
+    <div class ="p-4">
       <ul>
         {bins.map(bin => {
           return <Bin bin={bin} handleClick={handleBinClick} key={bin.binkey}/>
         })}
       </ul>
     </div>
+    
   )
 }
 

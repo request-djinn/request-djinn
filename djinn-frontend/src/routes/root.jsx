@@ -18,14 +18,14 @@ const Home = () => {
     <>
     <div>
     <Navigation />
-     <Header 
+        <Header 
         h1Text={'The Next-Djinneration of Request Inspectors'}
-        aboutText={'Here is some text in a smaller font, perhaps, that describes what our lil app does'}
-      />
-      <Button onClick={createRequest} buttonText="Create Bin"/>
-      <Button onClick={showBins} buttonText="My Bins"/>
-      <Bins />
-    </div>
+        aboutText={'A subdomain is provided to you that will collect requests made to it and let you inspect them in a human-friendly way'}
+        />
+        <div className="mx-28 -my-8">
+      <Button onClick={createRequest} buttonText="+ Create Bin"/>
+        </div>
+      </div>
     </>
   )
 }
