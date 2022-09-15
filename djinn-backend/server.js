@@ -107,9 +107,22 @@ mongoose.connect(process.env.MONGODB_URL)
 const db = mongoose.connection;
 db.on('error', (error) => console.error(error));
 db.once('open', () => console.log('Connected to MongoDB'));
-let url;
+
 // finding a  bin id for documents in mongo
 doc.find({ contentId: binId }); // binId found from app.all()
+
+// add headers and body to doc?
+
+// on the get, findallbyID so all associated requests are displayed.
+
+// i need a variable that stores headers
+// i need a variable that stores body
+// i need to get the bin ID
+
+const request = new Request ({
+  contentId: req.binID
+})
+
 
 /*
 
