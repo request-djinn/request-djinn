@@ -6,13 +6,20 @@ const mongoose = require('mongoose');
 const Request = require('./binDb.js');
 const hash = require('object-hash');
 // const { Pool } = require('pg');
-const { pool } = require("./relationalDb.js");
+// const { pool } = require("./relationalDb.js");
 const bodyParser = require('body-parser');
 
 const doc = new Request();
 console.log(Request, doc);
 
 app.use(bodyParser.urlencoded({ extended: true }));
+
+mongoose.connect("url")
+// "mongodb+srv://yeezymode1:xdm4euw-DZQ1vam-pab@cluster0.acmra.mongodb.net/?retryWrites=true&w=majority"
+const db = mongoose.connection;
+db.on('error', (error) => console.error(error));
+db.once('open', () => console.log('Connected to MongoDB'));
+
 
 // connecting to mongo: mongoose.connect
 // Mongoose will not throw any errors by default if you use a model without connecting.
@@ -30,15 +37,34 @@ app.post('/bin', (req, res) => {
     insertData(sqlArr);
     res.status(201).send({ status: 201, binKey: newBinKey, endPoint: endPoint });
   } catch (error) {
-    res.status(400).send({ status: 400, error: 'malformed request'});
+    res.status(400).send({ status: 400, error: 'malformed request'}); // won't be hit here?
   }
 });
 
+//NOTE 
+// IN THE ALL BLOCK, RETURN MONGO.FIND() WHEN A WEBHOOK REQ HITS A BIN ID
+// SEND THAT TO FRONT END LATER
+
+
 // Handle all webhook requests
-app.all('/', (req, res) =>  {
-  // console.log(req.method)
+app.all('/', async(req, res) =>  {
+  console.log('got here')
   const subdomain = req.headers.host;
-  let binKey = getBinKey("http://11f77dc318b8e78a2c67f9eea7697f7345866165.request-djinn.com")
+  // let binKey = getBinKey("http://11f77dc318b8e78a2c67f9eea7697f7345866165.request-djinn.com")
+  // if (binKey === null || binKey == undefined) {
+  //   res.status(400).send({status: 400, error: 'malformed request'});
+  // }
+
+  const request = new Request ({
+   
+    contentId: 'askdjbgkjgb', // do we need stringify here? not sure
+    headers: JSON.stringify(req.headers),
+    body: JSON.stringify(req.body) // body-parser
+  });
+  console.log("here now")
+  await request.save();
+  console.log("done waiting")
+  res.status(200);
   // store in mongo accordingly.
   // if binKey doesn't exist; return 400
   // if domain/url doesn't exist, return 400
@@ -46,17 +72,6 @@ app.all('/', (req, res) =>  {
 
 // function binRequest
 // console.log(JSON.stringify(request.body, null, 2));
-
-// Accepting a webhook req	HTTPMethod to *.request-djinn.com	{status: 200, timestamp: timestamp}	n/a
-/*
-app.get("///", (req, res) => {
-  try {
-    pool.connect(async (error, client, release) => {
-      let confirmed = await client.query()
-    })
-  }
-})
-*/ 
 
 app.listen(PORT, () => console.log('App is listening on port 3001'));
 
@@ -66,8 +81,6 @@ app.listen(PORT, () => console.log('App is listening on port 3001'));
 //   let splitHost = headersObj.host.split('.');
 //   return splitHost[0]; // guard clause in case this doesn't exist?
 // }
-
-
 
 function makeHash() {
   return hash([Math.random(), Math.random()]);
@@ -103,28 +116,18 @@ async function insertData(sqlArr) {
   }
 }
 
-mongoose.connect(process.env.MONGODB_URL)
-const db = mongoose.connection;
-db.on('error', (error) => console.error(error));
-db.once('open', () => console.log('Connected to MongoDB'));
 
 // finding a  bin id for documents in mongo
-doc.find({ contentId: binId }); // binId found from app.all()
+// doc.find({ contentId: binId }); // binId found from app.all()
 
-// add headers and body to doc?
 
-// on the get, findallbyID so all associated requests are displayed.
+// const request = new Request ({
+//   contentId: JSON.stringify(req.binkey), // do we need stringify here? not sure
+//   headers: JSON.stringify(req.headers),
+//   body: JSON.stringify(req.body) // body-parser
+// });
 
-// i need a variable that stores headers
-// i need a variable that stores body
-// i need to get the bin ID
-
-const request = new Request ({
-  contentId: req.binkey,
-  
-
-})
-
+// await request.save();
 
 /*
 

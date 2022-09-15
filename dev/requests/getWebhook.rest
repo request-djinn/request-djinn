@@ -1,0 +1,11 @@
+
+POST http://testsub.djinndb.dev:3001/
+Content-Type: application/json;
+
+{contentId: 'ajsdjksbfn',
+  binKey: '6653ert',
+  Host: 'aryan.request-djinn.com',
+  fromIp: '44.388.596',
+  requestMethod: 'HTTP',
+  xRequestId: 'unknown'
+}
