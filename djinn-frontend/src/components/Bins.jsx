@@ -13,7 +13,6 @@ const Bins = () => {
     //PLACEHOLDER CODE
     alert(`I'm gonna show you the bin for subdomain: ${subdomain} `)
   }
-  console.log(bins)
   return(
     <div class ="p-4">
       <ul>
@@ -29,7 +28,7 @@ const Bins = () => {
 const Bin = ({bin, handleClick}) => {  
   return(
     <Link to={`/requests/${bin.binkey}`}>
-      <li>
+      <li class="px-4 py-2">
         <p>Bin Key: {bin.binkey} | Created At: {bin.createdAt}</p>
       </li>
     </Link>
