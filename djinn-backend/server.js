@@ -100,7 +100,7 @@ function makeHash() {
 
 function parseReqNewBin(request, binKey, endPoint) {
   const timestamp = getTimeStamp();
-  return [binKey, timestamp, endPoint, timestamp, 0];
+  return [binkey, timestamp, endPoint, timestamp, 0];
 }
 
 function getTimeStamp() {
@@ -119,7 +119,7 @@ async function getBinKey(subdomain) {
 
 async function insertData(sqlArr) {
   try {
-    const [binKey, createdTime, endPoint, last, count] = sqlArr;
+    const [binkey, createdTime, endPoint, last, count] = sqlArr;
     const res = await pool.query(
        "INSERT INTO bins (binkey, createdTime, endPoint, last, count) VALUES ($1, $2, $3, $4, $5)", sqlArr
     );
