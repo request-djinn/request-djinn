@@ -120,7 +120,9 @@ doc.find({ contentId: binId }); // binId found from app.all()
 // i need to get the bin ID
 
 const request = new Request ({
-  contentId: req.binID
+  contentId: req.binkey,
+  
+
 })
 
 
