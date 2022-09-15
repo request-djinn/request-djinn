@@ -1,0 +1,11 @@
+
+POST http://testsub.djinndb.dev:3001/
+Content-Type: application/json;
+
+{contentId: 'ajsdjksbfn', // requestID rename
+  binKey: '6653ert', // webhook req won't have bin key. ONLY HOST; 
+  Host: 'aryan.request-djinn.com',
+  fromIp: '44.388.596',
+  requestMethod: 'GET',
+  xRequestId: 'unknown'
+}

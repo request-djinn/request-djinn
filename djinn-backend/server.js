@@ -1,28 +1,30 @@
 const express = require('express');
-const PORT = 3001;
+const PORT = process.env.PORT;
 const app = express();
 const mongoose = require('mongoose');
-// const mongoDb = require("Request");
 const Request = require('./binDb.js');
 const hash = require('object-hash');
-// const { Pool } = require('pg');
 const { pool } = require("./relationalDb.js");
 const bodyParser = require('body-parser');
+const dotenv = require("dotenv").config();
+
 
 const doc = new Request();
 console.log(Request, doc);
-
+console.log(PORT)
+// dotenv.config()
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// connecting to mongo: mongoose.connect
-// Mongoose will not throw any errors by default if you use a model without connecting.
-// db = mongoose.connection (after this, test db connection and errors)
-
-// console.log(hash([1, 2, 2.718, 3.14159]));
-// console.log(hash([Math.random(), Math.random()]));
+mongoose.connect(process.env.MONGODB_URL);
+const db = mongoose.connection;
+db.on('error', (error) => console.error(error));
+db.once('open', () => console.log('Connected to MongoDB'));
 
 // Request to create a bin
 app.post('/bin', (req, res) => {
+  // Request.deleteMany({});
+  // clearMongo();
+  // console.log(Request.find({}));
   try {
     let newBinKey = makeHash();
     let endPoint = 'http://' + makeHash() + '.request-djinn.com';
@@ -34,41 +36,63 @@ app.post('/bin', (req, res) => {
   }
 });
 
+//NOTE 
+// IN THE ALL BLOCK, RETURN MONGO.FIND() WHEN A WEBHOOK REQ HITS A BIN ID
+// SEND THAT TO FRONT END LATER
+
+
 // Handle all webhook requests
-app.all('/', (req, res) =>  {
-  // console.log(req.method)
-  const subdomain = req.headers.host;
-  let binKey = getBinKey("http://11f77dc318b8e78a2c67f9eea7697f7345866165.request-djinn.com")
-  // store in mongo accordingly.
-  // if binKey doesn't exist; return 400
-  // if domain/url doesn't exist, return 400
+
+// TO ADD:
+// WE GET BINKEY from postgres; PASS THAT INTO MONGO 
+app.all('/', async(req, res) =>  {
+  try {
+    const subdomain = req.headers.host;
+    let binKey = await getBinKey(subdomain);
+    // let binKey = "7109d4462970d8b413b0ff1bdc9d362c85b1177b"
+    // if (binKey === null || binKey == undefined) {
+    //   res.status(400).send({status: 400, error: 'malformed request'});
+    // }
+    // COUNT SHOULD BE INCREMENTED IN POSTGRES SO THAT WE CAN SET LIMITS/CLEAR BINS
+    const reqId = makeHash();
+    insertRequest(req, binKey, reqId);
+    res.status(200).send(JSON.stringify(reqId));
+  } catch (error) {
+    res.status(400).send({status: 400, error: 'malformed request'});
+  }
+    // store in mongo accordingly.
+    // if binKey doesn't exist; return 400
+    // if domain/url doesn't exist, return 400
 });
+
+// Get all requests by binId (beloging to a specific bin)
+// pass in a bin ID
+// We need to find all requests with a matching binId = request.binKey in mongo
+// /bin/:binId/requests
+// return json file //list all requests in a json object?
+
+app.get('/bin/:binKey/requests', async(req, res) => {
+  // const matchingRequests = await Model.find(binKey: binId);
+  const binKey = req.params.binKey;
+  console.log(binKey);
+  const matchingRequests = Request.find({binKey: binKey}, (error, data) => {
+    if(error) {
+      console.log(error) // delete
+      res.status(400).send({error: error})
+    } else {
+      console.log(data); // delete
+      res.status(200).send({status: 200, requests: data});
+    }
+  })
+})
+// CONFIRM THAT REQUEST.FIND IS ASYNC BY NATURE,.
 
 // function binRequest
 // console.log(JSON.stringify(request.body, null, 2));
 
-// Accepting a webhook req	HTTPMethod to *.request-djinn.com	{status: 200, timestamp: timestamp}	n/a
-/*
-app.get("///", (req, res) => {
-  try {
-    pool.connect(async (error, client, release) => {
-      let confirmed = await client.query()
-    })
-  }
-})
-*/ 
-
 app.listen(PORT, () => console.log('App is listening on port 3001'));
 
 // Helper Functions
-
-// function getSubdomain(headersObj) {
-//   let splitHost = headersObj.host.split('.');
-//   return splitHost[0]; // guard clause in case this doesn't exist?
-// }
-
-
-
 function makeHash() {
   return hash([Math.random(), Math.random()]);
 }
@@ -85,6 +109,7 @@ function getTimeStamp() {
 async function getBinKey(subdomain) {
   try {
     const res = await pool.query("SELECT binkey FROM bins WHERE endPoint = $1", [subdomain]);
+
     return res.rows[0].binkey;
   } catch (error) {
     console.error(error);
@@ -93,7 +118,7 @@ async function getBinKey(subdomain) {
 
 async function insertData(sqlArr) {
   try {
-    const [binkey, createdTime, endPoint, last, count] = sqlArr;
+    const [binKey, createdTime, endPoint, last, count] = sqlArr;
     const res = await pool.query(
        "INSERT INTO bins (binkey, createdTime, endPoint, last, count) VALUES ($1, $2, $3, $4, $5)", sqlArr
     );
@@ -103,26 +128,39 @@ async function insertData(sqlArr) {
   }
 }
 
-mongoose.connect(process.env.MONGODB_URL)
-const db = mongoose.connection;
-db.on('error', (error) => console.error(error));
-db.once('open', () => console.log('Connected to MongoDB'));
+async function insertRequest(req, binKey, reqId) {
+  const request = new Request ({
+    requestId: reqId, // do we need stringify here? not sure
+    binKey: binKey,
+    headers: JSON.stringify(req.headers),
+    body: JSON.stringify(req.body) // body-parser
+  });
+  console.log("here now")
+  await request.save();
+  console.log(await Request.find({}));
+}
+
+
+// function clearMongo() {
+// /* Connect to the DB */
+//   mongoose.connect("mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.5.4", function(){
+//     /* Drop the DB */
+//     mongoose.connection.db.dropDatabase();
+//     console.log("Mongo Cleared")
+// });
+// }
 
 // finding a  bin id for documents in mongo
-doc.find({ contentId: binId }); // binId found from app.all()
+// doc.find({ contentId: binId }); // binId found from app.all()
 
-// add headers and body to doc?
 
-// on the get, findallbyID so all associated requests are displayed.
+// const request = new Request ({
+//   contentId: JSON.stringify(req.binkey), // do we need stringify here? not sure
+//   headers: JSON.stringify(req.headers),
+//   body: JSON.stringify(req.body) // body-parser
+// });
 
-// i need a variable that stores headers
-// i need a variable that stores body
-// i need to get the bin ID
-
-const request = new Request ({
-  contentId: req.binID
-})
-
+// await request.save();
 
 /*
 
