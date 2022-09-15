@@ -1,5 +1,5 @@
 const express = require('express');
-const PORT = process.env.PORT;
+const PORT = 3001;
 const app = express();
 const mongoose = require('mongoose');
 const Request = require('./binDb.js');
@@ -11,7 +11,7 @@ const dotenv = require("dotenv").config();
 
 const doc = new Request();
 console.log(Request, doc);
-console.log(PORT)
+// console.log(PORT)
 // dotenv.config()
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -73,7 +73,7 @@ app.all('/', async(req, res) =>  {
 
 app.get('/bin/:binKey/requests', async(req, res) => {
   // const matchingRequests = await Model.find(binKey: binId);
-  const binKey = req.params.binKey;
+  const binKey = await req.params.binKey;
   console.log(binKey);
   const matchingRequests = Request.find({binKey: binKey}, (error, data) => {
     if(error) {
