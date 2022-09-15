@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import {useLocation} from 'react-router-dom';
 
+
 import binService from '../services/BinService';
 import Navigation from '../components/Navigation';
 import Request from '../components/Request';
