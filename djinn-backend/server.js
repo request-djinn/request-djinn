@@ -11,14 +11,14 @@ const dotenv = require("dotenv").config();
 
 const doc = new Request();
 console.log(Request, doc);
-// console.log(PORT)
-// dotenv.config()
+
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true });
-const db = mongoose.connection;
-db.on('error', (error) => console.error(error));
-db.once('open', () => console.log('Connected to MongoDB'));
+mongoose.connect(process.env.MONGODB_URL);
+// const db = mongoose.connection;
+// db.on('error', (error) => console.error(error));
+// db.once('open', () => console.log('Connected to MongoDB'));
+
 
 // Request to create a bin
 app.post('/bin', (req, res) => {
