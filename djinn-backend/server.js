@@ -130,6 +130,7 @@ async function insertData(sqlArr) {
 }
 
 async function insertRequest(req, binKey, reqId) {
+  console.log("IM HERE IN INSERTREQUEST")
   const request = new Request ({
     requestId: reqId, // do we need stringify here? not sure
     binKey: binKey,
