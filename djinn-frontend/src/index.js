@@ -15,18 +15,17 @@ const router = createBrowserRouter([
     path: '/',
     element: <Home />,
     errorElement: <ErrorPage />,
-    children: [
-      {
-        path: "bins/:binId/requests",
-        element: <Requests />
-      }
-    ]
   },
   {
     path: '/bins',
     element: <Bins />,
     errorElement: <ErrorPage/>
   },
+  {
+    path: '/requests/:binkey',
+    element: <Requests />,
+    errorElement: <ErrorPage/>,
+  }
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

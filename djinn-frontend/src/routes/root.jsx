@@ -1,8 +1,3 @@
-import { Outlet } from "react-router-dom";
-import {useEffect, useState} from 'react'
-
-import getBinKeys from '../services/BinKeyService'
-
 import Header from '../components/Header';
 import Navigation from '../components/Navigation';
 import Button from '../components/Button';
@@ -30,9 +25,6 @@ const Home = () => {
       <Button onClick={createRequest} buttonText="Create Bin"/>
       <Button onClick={showBins} buttonText="My Bins"/>
       <Bins />
-      <div id="requests">
-        <Outlet />
-      </div>
     </div>
     </>
   )

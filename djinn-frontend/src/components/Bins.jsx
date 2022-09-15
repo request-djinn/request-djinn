@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import {Link} from "react-router-dom";
 import getBinKeys from '../services/BinKeyService';
 
 const Bins = () => {
@@ -24,15 +25,13 @@ const Bins = () => {
   )
 }
 
-const Bin = ({bin, handleClick}) => {
-  const onClick = () => {
-    handleClick(bin.subdomain)
-  }
-  
+const Bin = ({bin, handleClick}) => {  
   return(
-    <li>
-      <p onClick={onClick}>Bin Key: {bin.binkey} | Created At: {bin.createdAt}</p>
-    </li>
+    <Link to={`/requests/${bin.binkey}`}>
+      <li>
+        <p>Bin Key: {bin.binkey} | Created At: {bin.createdAt}</p>
+      </li>
+    </Link>
   )
 }
 
