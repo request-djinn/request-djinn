@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const Request = require('./binDb.js');
 const hash = require('object-hash');
 // const { Pool } = require('pg');
-// const { pool } = require("./relationalDb.js");
+const { pool } = require("./relationalDb.js");
 const bodyParser = require('body-parser');
 
 const doc = new Request();
@@ -14,11 +14,11 @@ console.log(Request, doc);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect("url")
+// mongoose.connect("mongodb+srv://yeezymode1:xdm4euw-DZQ1vam-pab@cluster0.acmra.mongodb.net/?retryWrites=true&w=majority")
 // "mongodb+srv://yeezymode1:xdm4euw-DZQ1vam-pab@cluster0.acmra.mongodb.net/?retryWrites=true&w=majority"
-const db = mongoose.connection;
-db.on('error', (error) => console.error(error));
-db.once('open', () => console.log('Connected to MongoDB'));
+// const db = mongoose.connection;
+// db.on('error', (error) => console.error(error));
+// db.once('open', () => console.log('Connected to MongoDB'));
 
 
 // connecting to mongo: mongoose.connect
@@ -37,7 +37,7 @@ app.post('/bin', (req, res) => {
     insertData(sqlArr);
     res.status(201).send({ status: 201, binKey: newBinKey, endPoint: endPoint });
   } catch (error) {
-    res.status(400).send({ status: 400, error: 'malformed request'}); // won't be hit here?
+    res.status(400).send({ status: 400, error: 'malformed request'});
   }
 });
 
@@ -47,28 +47,31 @@ app.post('/bin', (req, res) => {
 
 
 // Handle all webhook requests
-app.all('/', async(req, res) =>  {
-  console.log('got here')
-  const subdomain = req.headers.host;
-  // let binKey = getBinKey("http://11f77dc318b8e78a2c67f9eea7697f7345866165.request-djinn.com")
-  // if (binKey === null || binKey == undefined) {
-  //   res.status(400).send({status: 400, error: 'malformed request'});
-  // }
 
-  const request = new Request ({
+// TO ADD:
+// WE GET BINKEY from postgres; PASS THAT INTO MONGO 
+// app.all('/', async(req, res) =>  {
+//   console.log('got here')
+//   const subdomain = req.headers.host;
+//   // let binKey = getBinKey("http://11f77dc318b8e78a2c67f9eea7697f7345866165.request-djinn.com")
+//   // if (binKey === null || binKey == undefined) {
+//   //   res.status(400).send({status: 400, error: 'malformed request'});
+//   // }
+
+//   const request = new Request ({
    
-    contentId: 'askdjbgkjgb', // do we need stringify here? not sure
-    headers: JSON.stringify(req.headers),
-    body: JSON.stringify(req.body) // body-parser
-  });
-  console.log("here now")
-  await request.save();
-  console.log("done waiting")
-  res.status(200);
-  // store in mongo accordingly.
-  // if binKey doesn't exist; return 400
-  // if domain/url doesn't exist, return 400
-});
+//     contentId: 'newomke234y3467', // do we need stringify here? not sure
+//     headers: JSON.stringify(req.headers),
+//     body: JSON.stringify(req.body) // body-parser
+//   });
+//   console.log("here now")
+//   await request.save();
+//   console.log("done waiting")
+//   res.status(200);
+//   // store in mongo accordingly.
+//   // if binKey doesn't exist; return 400
+//   // if domain/url doesn't exist, return 400
+// });
 
 // function binRequest
 // console.log(JSON.stringify(request.body, null, 2));
@@ -98,6 +101,7 @@ function getTimeStamp() {
 async function getBinKey(subdomain) {
   try {
     const res = await pool.query("SELECT binkey FROM bins WHERE endPoint = $1", [subdomain]);
+
     return res.rows[0].binkey;
   } catch (error) {
     console.error(error);
@@ -106,7 +110,7 @@ async function getBinKey(subdomain) {
 
 async function insertData(sqlArr) {
   try {
-    const [binkey, createdTime, endPoint, last, count] = sqlArr;
+    const [binKey, createdTime, endPoint, last, count] = sqlArr;
     const res = await pool.query(
        "INSERT INTO bins (binkey, createdTime, endPoint, last, count) VALUES ($1, $2, $3, $4, $5)", sqlArr
     );
