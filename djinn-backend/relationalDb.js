@@ -4,9 +4,10 @@ const pool = new Pool({
   user: 'aryanbinazir',
   database: 'aryanbinazir',
   port: 5432,
-  host: 'localhost',
+  password: '',
+  host: 'http://localhost',
 })
 
-// password: '',
+
 
 module.exports = { pool };
