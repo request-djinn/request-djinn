@@ -2,10 +2,14 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const requestSchema = new Schema({
-  contentId: {
+  requestId: { // changed from contentId.
     type: String,
     required: true,
     unique: true
+  },
+  binKey: {
+    type: String,
+    required: true
   },
   headers: {
     type: Array,
