@@ -11,7 +11,7 @@ const getBin = async (binId) => {
 }
 
 const getRequests = async (binId) => {
-  return await axios.get(`${baseURL}/${binId}`)
+  return await axios.get(`${baseURL}/${binId}/requests`)
 }
 
 const binService = {
