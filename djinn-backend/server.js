@@ -119,7 +119,7 @@ async function getBinKey(subdomain) {
 
 async function insertData(sqlArr) {
   try {
-    console.log("IM HERE IN INSERTREQUEST")
+    console.log("IM HERE IN INSERTREQUEST", sqlArr)
     const [binkey, createdTime, endPoint, last, count] = sqlArr;
     const res = await pool.query(
        "INSERT INTO bins (binkey, createdTime, endPoint, last, count) VALUES ($1, $2, $3, $4, $5)", sqlArr
