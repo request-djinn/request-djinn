@@ -1,3 +1,7 @@
+const Request = require('./models/binDb.js');
+const { pool } = require("./models/relationalDb.js");
+const hash = require('object-hash');
+
 function makeHash() {
   return hash([Math.random(), Math.random()]);
 }
@@ -42,4 +46,8 @@ async function insertRequest(req, binKey, reqId) {
   await request.save();
 }
 
-module.exports = { makeHash, parseReqNewBin, getTimeStamp, getBinKey, insertData, insertRequest }
+function getBin() {
+  pool.query("SELECT * FROM bins WHERE binKey = $1", [binKey]);
+}
+
+module.exports = { makeHash, parseReqNewBin, getTimeStamp, getBinKey, insertData, insertRequest, getBin }
