@@ -65,7 +65,7 @@ app.get('/bin/:binKey/requests', async(req, res) => {
 
 app.get('/bin/:binKey', async (req, res) => {
   const binKey = req.params.binKey;
-  const data = await db.getBin();
+  const data = await db.getBin(binKey);
   res.json(data);
 })
 

@@ -46,8 +46,8 @@ async function insertRequest(req, binKey, reqId) {
   await request.save();
 }
 
-function getBin() {
-  pool.query("SELECT * FROM bins WHERE binKey = $1", [binKey]);
+async function getBin(binKey) {
+  return await pool.query("SELECT * FROM bins WHERE binKey = $1", [binKey]);
 }
 
 module.exports = { makeHash, parseReqNewBin, getTimeStamp, getBinKey, insertData, insertRequest, getBin }
