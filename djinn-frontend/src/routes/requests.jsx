@@ -14,18 +14,21 @@ const Requests = () => {
     
   useEffect(() => {
     const fetchData = async () => {
+      // const bin = await binService.getBin(binkey)
       const requests = await binService.getRequests(binkey)
-      const bin = await binService.getBin(binkey)
       return {requests, bin}
     }
 
     fetchData()
       .then(data => {
-        setBin(data.bin)
+        // setBin(data.bin)
         setRequests(data.requests)
       })
       .catch(error => console.log(error));
   }, [binkey])
+  
+  console.log(requests)
+
     return(
       <div>
         <Navigation />
