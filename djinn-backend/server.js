@@ -47,7 +47,7 @@ app.post('/bin', (req, res) => {
 // WE GET BINKEY from postgres; PASS THAT INTO MONGO 
 app.all('/', async(req, res) =>  {
   try {
-    const subdomain = req.headers.host;
+    const subdomain = 'http://' + req.headers.host;
     let binKey = await getBinKey(subdomain);
     console.log("binKey", binKey);
     // let binKey = "7109d4462970d8b413b0ff1bdc9d362c85b1177b"
