@@ -5,7 +5,7 @@ const BinsPage = () => {
   return(
     <div>
       <Navigation />
-      <h2 class="p-7 text-2xl font-bold">My Bins</h2>
+      <h2 className="p-7 text-2xl font-bold">My Bins</h2>
       <Bins />
     </div>
   )
