@@ -9,7 +9,7 @@ import ErrorPage from './routes/error-page';
 import Requests from './routes/requests';
 import Bins from './routes/bins';
 
-setLocalStorage();
+
 const router = createBrowserRouter([
   {
     path: '/',

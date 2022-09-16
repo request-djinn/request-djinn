@@ -1,19 +1,20 @@
 import axios from "axios"
 
-const baseURL = 'http://localhost:3001/bin'
+const baseURL = '/bin' //'/bin'
 
 const createBin = async () => {
   return await axios.post(baseURL)
 }
 
 const getBin = async (binkey) => {
-  // return await axios.get(`${baseURL}/${binkey}`)
-  return dummyBin
+  return await axios.get(`${baseURL}/${binkey}`)
+  // return dummyBin
 }
 
 const getRequests = async (binkey) => {
-  // return await axios.get(`${baseURL}/${binkey}/requests`)
-  return dummyReqs
+  const res = await axios.get(`${baseURL}/${binkey}/requests`)
+  return res.data.requests  
+// return dummyReqs
 }
 
 const dummyBin = {

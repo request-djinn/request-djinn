@@ -1,76 +1,51 @@
-const express = require('express');
+require("dotenv").config();
 const PORT = 3001;
-const app = express();
-const mongoose = require('mongoose');
-const Request = require('./binDb.js');
-const hash = require('object-hash');
-const { pool } = require("./relationalDb.js");
-const bodyParser = require('body-parser');
-const dotenv = require("dotenv").config();
 
+const express = require('express');
+const mongoose = require('mongoose');
+const morgan = require('morgan')
+const hash = require('object-hash');
+const bodyParser = require('body-parser');
+
+const cors = require('cors');
+
+const Request = require('./models/binDb.js');
+const { pool } = require("./models/relationalDb.js");
 
 const doc = new Request();
-console.log(Request, doc);
+const app = express();
 
+
+mongoose.connect(process.env.MONGODB_URL)
+  .then(() => {
+    console.log('Connected to mongodb')
+  })
+  .catch((error) => {
+    console.log(`Error connecting to MongoDB: ${error}`)
+  });
+
+app.use(cors());
+app.use(express.static('build'));
 app.use(bodyParser.urlencoded({ extended: true }));
-
-mongoose.connect(process.env.MONGODB_URL);
-// const db = mongoose.connection;
-// db.on('error', (error) => console.error(error));
-// db.once('open', () => console.log('Connected to MongoDB'));
+app.use(bodyParser.json());
+app.use(morgan('tiny'))
 
 
-// Request to create a bin
 app.post('/bin', (req, res) => {
-  // Request.deleteMany({});
-  // clearMongo();
-  // console.log(Request.find({}));
+
   try {
     let newBinKey = makeHash();
     let endPoint = 'http://' + makeHash() + '.request-djinn.com';
     let sqlArr = parseReqNewBin(req, newBinKey, endPoint);
+   const createdAt = sqlArr[1]; 
+   console.log("I hit the route!")
     insertData(sqlArr);
-    res.status(201).send({ status: 201, binKey: newBinKey, endPoint: endPoint });
+    console.log("I got through to Postgres!")
+    res.status(201).send({ status: 201, binKey: newBinKey, endPoint: endPoint, createdAt });
   } catch (error) {
     res.status(400).send({ status: 400, error: 'malformed request'});
   }
 });
-
-//NOTE 
-// IN THE ALL BLOCK, RETURN MONGO.FIND() WHEN A WEBHOOK REQ HITS A BIN ID
-// SEND THAT TO FRONT END LATER
-
-
-// Handle all webhook requests
-
-// TO ADD:
-// WE GET BINKEY from postgres; PASS THAT INTO MONGO 
-app.all('/', async(req, res) =>  {
-  try {
-    const subdomain = 'http://' + req.headers.host;
-    let binKey = await getBinKey(subdomain);
-    console.log("binKey", binKey);
-    // let binKey = "7109d4462970d8b413b0ff1bdc9d362c85b1177b"
-    // if (binKey === null || binKey == undefined) {
-    //   res.status(400).send({status: 400, error: 'malformed request'});
-    // }
-    // COUNT SHOULD BE INCREMENTED IN POSTGRES SO THAT WE CAN SET LIMITS/CLEAR BINS
-    const reqId = makeHash();
-    insertRequest(req, binKey, reqId);
-    res.status(200).send(JSON.stringify(reqId));
-  } catch (error) {
-    res.status(400).send({status: 400, error: 'malformed request'});
-  }
-    // store in mongo accordingly.
-    // if binKey doesn't exist; return 400
-    // if domain/url doesn't exist, return 400
-});
-
-// Get all requests by binId (beloging to a specific bin)
-// pass in a bin ID
-// We need to find all requests with a matching binId = request.binKey in mongo
-// /bin/:binId/requests
-// return json file //list all requests in a json object?
 
 app.get('/bin/:binKey/requests', async(req, res) => {
   // const matchingRequests = await Model.find(binKey: binId);
@@ -86,14 +61,31 @@ app.get('/bin/:binKey/requests', async(req, res) => {
     }
   })
 })
-// CONFIRM THAT REQUEST.FIND IS ASYNC BY NATURE,.
 
-// function binRequest
-// console.log(JSON.stringify(request.body, null, 2));
+app.get('/bin/:binKey', async (req, res) => {
+  console.log("I'm getting your bin!")
+  const binKey = req.params.binKey;
+  const data = await pool.query("SELECT * FROM bins WHERE binKey = $1", [binKey]);
+  console.log(data);
+  res.json(data);
+})
+
+app.all('/', async(req, res) =>  {
+  try {
+    const subdomain = 'http://' + req.headers.host;
+    const binKey = await getBinKey(subdomain);
+    const reqId = makeHash();
+    insertRequest(req, binKey, reqId);
+
+    res.status(200).send(JSON.stringify(reqId));
+
+  } catch (error) {
+    res.status(400).send({status: 400, error: 'malformed request'});
+  }
+});
 
 app.listen(PORT, () => console.log('App is listening on port 3001'));
 
-// Helper Functions
 function makeHash() {
   return hash([Math.random(), Math.random()]);
 }
@@ -143,36 +135,3 @@ async function insertRequest(req, binKey, reqId) {
   await request.save();
   console.log(await Request.find({}));
 }
-
-
-// function clearMongo() {
-// /* Connect to the DB */
-//   mongoose.connect("mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.5.4", function(){
-//     /* Drop the DB */
-//     mongoose.connection.db.dropDatabase();
-//     console.log("Mongo Cleared")
-// });
-// }
-
-// finding a  bin id for documents in mongo
-// doc.find({ contentId: binId }); // binId found from app.all()
-
-
-// const request = new Request ({
-//   contentId: JSON.stringify(req.binkey), // do we need stringify here? not sure
-//   headers: JSON.stringify(req.headers),
-//   body: JSON.stringify(req.body) // body-parser
-// });
-
-// await request.save();
-
-/*
-
-{contentId: 'ajsdjksbfn',
-  binKey: '6653ert',
-  Host: 'aryan.request-djinn.com',
-  fromIp: '44.388.596',
-  requestMethod: 'HTTP',
-  xRequestId: 'unknown'
-}
-*/
