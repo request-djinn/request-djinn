@@ -1,14 +1,16 @@
+require('dotenv').config();
+
 const PORT = 3001;
 const BASE_URL = '.request-djinn.com'
+
 const cors = require('cors');
 const express = require('express');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
-const db = require('./utils/dbUtils');
-require('dotenv').config();
+const path = require('path');
 
-const app = express();
+const db = require('./utils/dbUtils');
 
 mongoose.connect(process.env.MONGODB_URL)
   .then(() => {
@@ -18,6 +20,7 @@ mongoose.connect(process.env.MONGODB_URL)
     console.log(`Error connecting to MongoDB: ${error}`);
   });
 
+const app = express();
 app.use(cors());
 app.use(express.static('build'));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -79,8 +82,8 @@ app.get('/bin/:binKey', async (req, res) => {
   res.json(data);
 });
 
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, '/build/index.html'))
+});
+
 app.listen(PORT, () => console.log('App is listening on port 3001'));
-
-// helper functions
-
-// const createRequestURL = (domain) => ``;
