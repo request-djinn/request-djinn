@@ -1,5 +1,5 @@
 const PORT = 3001;
-const BASE_URL = process.env.BASE_URL;
+const BASE_URL = '.request-djinn.com'
 const cors = require('cors');
 const express = require('express');
 const mongoose = require('mongoose');
