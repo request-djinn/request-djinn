@@ -1,18 +1,18 @@
-const Request = require('../models/binDb.js');
-const { pool } = require("../models/relationalDb.js");
+const { pool } = require('../models/relationalDb');
 const hash = require('object-hash');
+const Request = require('../models/binDb');
 
 function makeHash() {
   return hash([Math.random(), Math.random()]);
 }
 
+function getTimeStamp() {
+  return new Date(Date.now()).toISOString();
+}
+
 function parseReqNewBin(request, binkey, endPoint) {
   const timestamp = getTimeStamp();
   return [binkey, timestamp, endPoint, timestamp, 0];
-}
-
-function getTimeStamp() {
-  return new Date(Date.now()).toISOString();
 }
 
 async function getBinKey(subdomain) {
@@ -51,7 +51,16 @@ async function getBin(binKey) {
 }
 
 async function getRequests(binKey) {
-  return await Request.find({binKey: binKey})
+  return await Request.find({ binKey });
 }
 
-module.exports = { makeHash, parseReqNewBin, getTimeStamp, getBinKey, insertData, insertRequest, getBin, getRequests }
+module.exports = {
+  makeHash,
+  parseReqNewBin,
+  getTimeStamp,
+  getBinKey,
+  insertData,
+  insertRequest,
+  getBin,
+  getRequests,
+};
