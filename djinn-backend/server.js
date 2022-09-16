@@ -30,7 +30,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(morgan('tiny'))
 
-app.all('/', async(req, res) =>  {
+app.all('/request', async(req, res) =>  {
   try {
     const subdomain = 'http://' + req.headers.host;
     const binKey = await getBinKey(subdomain);
@@ -48,7 +48,7 @@ app.post('/bin', (req, res) => {
 
   try {
     let newBinKey = makeHash();
-    let endPoint = 'http://' + makeHash() + '.request-djinn.com';
+    let endPoint = 'http://' + makeHash() + '.request-djinn.com/request';
     let sqlArr = parseReqNewBin(req, newBinKey, endPoint);
    const createdAt = sqlArr[1]; 
    console.log("I hit the route!")
