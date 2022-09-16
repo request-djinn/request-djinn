@@ -1,5 +1,5 @@
 const express = require('express');
-const PORT = process.env.PORT;
+const PORT = 3001;
 const app = express();
 const mongoose = require('mongoose');
 const Request = require('./binDb.js');
@@ -11,14 +11,14 @@ const dotenv = require("dotenv").config();
 
 const doc = new Request();
 console.log(Request, doc);
-console.log(PORT)
-// dotenv.config()
+
 app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect(process.env.MONGODB_URL);
-const db = mongoose.connection;
-db.on('error', (error) => console.error(error));
-db.once('open', () => console.log('Connected to MongoDB'));
+// const db = mongoose.connection;
+// db.on('error', (error) => console.error(error));
+// db.once('open', () => console.log('Connected to MongoDB'));
+
 
 // Request to create a bin
 app.post('/bin', (req, res) => {
@@ -47,8 +47,9 @@ app.post('/bin', (req, res) => {
 // WE GET BINKEY from postgres; PASS THAT INTO MONGO 
 app.all('/', async(req, res) =>  {
   try {
-    const subdomain = req.headers.host;
+    const subdomain = 'http://' + req.headers.host;
     let binKey = await getBinKey(subdomain);
+    console.log("binKey", binKey);
     // let binKey = "7109d4462970d8b413b0ff1bdc9d362c85b1177b"
     // if (binKey === null || binKey == undefined) {
     //   res.status(400).send({status: 400, error: 'malformed request'});
@@ -73,8 +74,8 @@ app.all('/', async(req, res) =>  {
 
 app.get('/bin/:binKey/requests', async(req, res) => {
   // const matchingRequests = await Model.find(binKey: binId);
-  const binKey = req.params.binKey;
-  console.log(binKey);
+  const binKey = await req.params.binKey;
+
   const matchingRequests = Request.find({binKey: binKey}, (error, data) => {
     if(error) {
       console.log(error) // delete
@@ -97,9 +98,9 @@ function makeHash() {
   return hash([Math.random(), Math.random()]);
 }
 
-function parseReqNewBin(request, binKey, endPoint) {
+function parseReqNewBin(request, binkey, endPoint) {
   const timestamp = getTimeStamp();
-  return [binKey, timestamp, endPoint, timestamp, 0];
+  return [binkey, timestamp, endPoint, timestamp, 0];
 }
 
 function getTimeStamp() {
@@ -108,9 +109,10 @@ function getTimeStamp() {
 
 async function getBinKey(subdomain) {
   try {
-    const res = await pool.query("SELECT binkey FROM bins WHERE endPoint = $1", [subdomain]);
-
-    return res.rows[0].binkey;
+    console.log("subdomain", subdomain);
+    const res = await pool.query("SELECT binKey FROM bins WHERE endPoint = $1", [subdomain]);
+    console.log("res.rows", res.rows);
+    return res.rows[0].binkey; // small k intentional
   } catch (error) {
     console.error(error);
   }
@@ -118,9 +120,10 @@ async function getBinKey(subdomain) {
 
 async function insertData(sqlArr) {
   try {
+    console.log("IM HERE IN INSERTREQUEST", sqlArr)
     const [binKey, createdTime, endPoint, last, count] = sqlArr;
     const res = await pool.query(
-       "INSERT INTO bins (binkey, createdTime, endPoint, last, count) VALUES ($1, $2, $3, $4, $5)", sqlArr
+       "INSERT INTO bins (binKey, createdTime, endPoint, last, count) VALUES ($1, $2, $3, $4, $5)", sqlArr
     );
     console.log(`Added a row`);
   } catch (error) {
@@ -129,6 +132,7 @@ async function insertData(sqlArr) {
 }
 
 async function insertRequest(req, binKey, reqId) {
+
   const request = new Request ({
     requestId: reqId, // do we need stringify here? not sure
     binKey: binKey,
