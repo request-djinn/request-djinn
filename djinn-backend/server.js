@@ -54,7 +54,7 @@ app.post('/bin', (req, res) => {
    db.insertData(sqlArr);
     res.status(201).send({ status: 201, binKey: newBinKey, endPoint: endPoint, createdAt });
   } catch (error) {
-    res.status(400).send({ status: 400, error: 'malformed request'});
+    res.status(400).send({ status: 400, error: 'malformed request', message: error});
   }
 });
 
