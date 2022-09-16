@@ -1,31 +1,39 @@
+import { useState } from 'react';
+
 import Header from '../components/Header';
 import Navigation from '../components/Navigation';
 import Button from '../components/Button';
-import Bins from '../components/Bins';
+import Notification from '../components/Notification';
+
+import binService from '../services/BinService'
 
 const Home = () => {
-  const createRequest = () => {
-    // PLACEHOLDER CODE
-    alert('COMING SOON!')
+  const [notification, setNotification] = useState(null);
+  
+  const showNotification = (message) => {
+    setNotification(message)
+    setTimeout(() => {
+      setNotification(null)
+    }, 10000)
   }
-
-  const showBins = () => {
-    // PLACEHOLDER CODE
-    alert('COMING SOON!')
+  const createBin = async () => {
+    const res = await binService.createBin()
+    showNotification(`Bin created for subdomain: ${res.endpoint}. Click 'My Bins' to view`)
   }
 
   return(
     <>
     <div>
-    <Navigation />
-        <Header 
+      <Navigation />
+      <Notification message={notification}/>
+      <Header 
         h1Text={'The Next-Djinneration of Request Inspectors'}
         aboutText={'A subdomain is provided to you that will collect requests made to it and let you inspect them in a human-friendly way'}
-        />
-        <div className="mx-28 -my-8">
-      <Button onClick={createRequest} buttonText="+ Create Bin"/>
-        </div>
+      />
+      <div className="mx-28 -my-8">
+        <Button onClick={createBin} buttonText="+ Create Bin"/>
       </div>
+    </div>
     </>
   )
 }

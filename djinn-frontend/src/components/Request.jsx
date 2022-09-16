@@ -1,25 +1,26 @@
-const Request = ({req}) => {
+const Request = ({request}) => {
+  const headers = Object.entries(JSON.parse(request.headers))
+  console.log(Object.entries(headers));
   return(
-    <div className="request">
-      <div className="request-headers">
+    <div>
+      <div className="bg-slate-400 border-4 border-blue-200 border-solid py-6 px-4 mx-4">
         <ul>
-          {
-            req.headers.map((key, value) => {
-              return <HTTPHeader key={key} value={value} />
+          {headers.map((h) => {
+              return <HTTPHeader key={`${h[0]}${h[1]}`} header={h[0]} value={h[1]} />
             })
           }
         </ul>
-      </div>
-      <div className="request-body">
-          <p>{req.body}</p>
+        <div className="request-body">
+         <p className='text-black'>Body: {request.body}</p>
+        </div>
       </div>
     </div>
   )
 }
 
-const HTTPHeader = ({key, value}) => {
+const HTTPHeader = ({header, value}) => {
   return(
-    <li><strong>{key}</strong>: {value}</li>
+    <li><strong>{header}</strong>: {value}</li>
   )
 }
 
