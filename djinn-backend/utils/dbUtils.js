@@ -1,5 +1,5 @@
-const Request = require('./models/binDb.js');
-const { pool } = require("./models/relationalDb.js");
+const Request = require('../models/binDb.js');
+const { pool } = require("../models/relationalDb.js");
 const hash = require('object-hash');
 
 function makeHash() {
