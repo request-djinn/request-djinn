@@ -46,26 +46,6 @@ app.post('/bin', (req, res) => {
   }
 });
 
-app.all('/', async(req, res) =>  {
-  try {
-    const subdomain = 'http://' + req.headers.host;
-    const binKey = await getBinKey(subdomain);
-    const reqId = makeHash();
-    insertRequest(req, binKey, reqId);
-
-    res.status(200).send(JSON.stringify(reqId));
-
-  } catch (error) {
-    res.status(400).send({status: 400, error: 'malformed request'});
-  }
-});
-
-app.get('/bin/:binKey', async (req, res) => {
-  const binKey = req.params.binKey;
-  const data = await pool.query("SELECT endPoint, createdTime, last, count FROM bins WHERE binKey= $1", [binKey]);
-  res.json(data);
-})
-
 app.get('/bin/:binKey/requests', async(req, res) => {
   // const matchingRequests = await Model.find(binKey: binId);
   const binKey = await req.params.binKey;
@@ -80,6 +60,26 @@ app.get('/bin/:binKey/requests', async(req, res) => {
     }
   })
 })
+
+app.get('/bin/:binKey', async (req, res) => {
+  const binKey = req.params.binKey;
+  const data = await pool.query("SELECT * FROM bins WHERE binKey = $1", [binKey]);
+  res.json(data);
+})
+
+app.all('/', async(req, res) =>  {
+  try {
+    const subdomain = 'http://' + req.headers.host;
+    const binKey = await getBinKey(subdomain);
+    const reqId = makeHash();
+    insertRequest(req, binKey, reqId);
+
+    res.status(200).send(JSON.stringify(reqId));
+
+  } catch (error) {
+    res.status(400).send({status: 400, error: 'malformed request'});
+  }
+});
 
 app.listen(PORT, () => console.log('App is listening on port 3001'));
 
