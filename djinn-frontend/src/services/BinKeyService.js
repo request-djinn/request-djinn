@@ -1,7 +1,7 @@
 const getBinKeys = () => {
   const bins = localStorage.getItem('bins')
   if (!bins || bins.length === 0) {
-    return "no bins??"
+    return JSON.stringify([])
   } else {
     return bins
   }
