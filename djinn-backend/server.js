@@ -1,8 +1,9 @@
 require("dotenv").config();
 const PORT = 3001;
-
+const db = require('./utils/dbUtils')
 const express = require('express');
 const mongoose = require('mongoose');
+<<<<<<< HEAD
 const morgan = require('morgan');
 const hash = require('object-hash');
 const bodyParser = require('body-parser');
@@ -13,6 +14,11 @@ const Request = require('./models/binDb.js');
 const { pool } = require("./models/relationalDb.js");
 
 const doc = new Request();
+=======
+const morgan = require('morgan')
+const bodyParser = require('body-parser');
+const cors = require('cors');
+>>>>>>> f431e923171c6bd56e04b111b280012d6b7b67d8
 const app = express();
 
 
@@ -29,6 +35,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(morgan('tiny'))
 
+<<<<<<< HEAD
 app.use(express.static('build'));
 
 app.post('/bin', (req, res) => {
@@ -71,11 +78,14 @@ app.get('/bin/:binKey', async (req, res) => {
 })
 
 app.all('/', async(req, res) =>  {
+=======
+app.all('/request', async(req, res) =>  {
+>>>>>>> f431e923171c6bd56e04b111b280012d6b7b67d8
   try {
-    const subdomain = 'http://' + req.headers.host;
-    const binKey = await getBinKey(subdomain);
-    const reqId = makeHash();
-    insertRequest(req, binKey, reqId);
+    const subdomain = 'http://' + req.headers.host + '/request';
+    const binKey = await db.getBinKey(subdomain);
+    const reqId = db.makeHash();
+    db.insertRequest(req, binKey, reqId);
 
     res.status(200).send(JSON.stringify(reqId));
 
@@ -84,6 +94,7 @@ app.all('/', async(req, res) =>  {
   }
 });
 
+<<<<<<< HEAD
 app.all('/*', (req, res) => {
   console.log("hit the catchall!")
   res.sendFile(path.join(__dirname, '/build/index.html'));
@@ -103,40 +114,36 @@ function parseReqNewBin(request, binkey, endPoint) {
 function getTimeStamp() {
   return new Date(Date.now()).toISOString();
 }
+=======
+app.post('/bin', (req, res) => {
+>>>>>>> f431e923171c6bd56e04b111b280012d6b7b67d8
 
-async function getBinKey(subdomain) {
   try {
-    console.log("subdomain", subdomain);
-    const res = await pool.query("SELECT binKey FROM bins WHERE endPoint = $1", [subdomain]);
-    console.log("res.rows", res.rows);
-    return res.rows[0].binkey; // small k intentional
+    let newBinKey = db.makeHash();
+    let endPoint = 'http://' + db.makeHash() + '.request-djinn.com/request';
+    let sqlArr = db.parseReqNewBin(req, newBinKey, endPoint);
+    const createdAt = sqlArr[1]; 
+    db.insertData(sqlArr);
+    res.status(201).send({ status: 201, binKey: newBinKey, endPoint: endPoint, createdAt });
   } catch (error) {
-    console.error(error);
+    res.status(400).send({ status: 400, error: 'malformed request', message: error});
   }
-}
+});
 
-async function insertData(sqlArr) {
+app.get('/bin/:binKey/requests', async(req, res) => {
+  const binKey = req.params.binKey;
   try {
-    console.log("IM HERE IN INSERTREQUEST", sqlArr)
-    const [binKey, createdTime, endPoint, last, count] = sqlArr;
-    const res = await pool.query(
-       "INSERT INTO bins (binKey, createdTime, endPoint, last, count) VALUES ($1, $2, $3, $4, $5)", sqlArr
-    );
-    console.log(`Added a row`);
-  } catch (error) {
-    console.error(error)
+    let data = await db.getRequests(binKey);
+    res.status(200).send({status: 200, requests: data});
+  } catch(error) {
+    res.status(400).send({error: error})
   }
-}
+})
 
-async function insertRequest(req, binKey, reqId) {
+app.get('/bin/:binKey', async (req, res) => {
+  const binKey = req.params.binKey;
+  const data = await db.getBin(binKey);
+  res.json(data);
+})
 
-  const request = new Request ({
-    requestId: reqId, // do we need stringify here? not sure
-    binKey: binKey,
-    headers: JSON.stringify(req.headers),
-    body: JSON.stringify(req.body) // body-parser
-  });
-  console.log("here now")
-  await request.save();
-  console.log(await Request.find({}));
-}
+app.listen(PORT, () => console.log('App is listening on port 3001'));
