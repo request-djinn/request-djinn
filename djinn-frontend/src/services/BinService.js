@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const baseURL = 'http://localhost:3001/bin'
+const baseURL = '/bin' //'/bin'
 
 const createBin = async () => {
   return await axios.post(baseURL)

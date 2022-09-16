@@ -31,11 +31,14 @@ app.use(morgan('tiny'))
 
 
 app.post('/bin', (req, res) => {
+
   try {
     let newBinKey = makeHash();
     let endPoint = 'http://' + makeHash() + '.request-djinn.com';
     let sqlArr = parseReqNewBin(req, newBinKey, endPoint);
+    console.log("I hit the route!")
     insertData(sqlArr);
+    console.log("I got through to Postgres!")
     res.status(201).send({ status: 201, binKey: newBinKey, endPoint: endPoint });
   } catch (error) {
     res.status(400).send({ status: 400, error: 'malformed request'});
