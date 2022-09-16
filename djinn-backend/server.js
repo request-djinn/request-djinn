@@ -109,8 +109,9 @@ function getTimeStamp() {
 
 async function getBinKey(subdomain) {
   try {
+    console.log(subdomain);
     const res = await pool.query("SELECT binKey FROM bins WHERE endPoint = $1", [subdomain]);
-
+    console.log(res.rows);
     return res.rows[0].binKey;
   } catch (error) {
     console.error(error);
