@@ -112,7 +112,7 @@ async function getBinKey(subdomain) {
     console.log("subdomain", subdomain);
     const res = await pool.query("SELECT binKey FROM bins WHERE endPoint = $1", [subdomain]);
     console.log("res.rows", res.rows);
-    return res.rows[0].binKey;
+    return res.rows[0].binkey; // small k intentional
   } catch (error) {
     console.error(error);
   }
