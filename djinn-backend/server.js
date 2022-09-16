@@ -27,6 +27,7 @@ mongoose.connect(process.env.MONGODB_URL)
 app.use(cors());
 app.use(express.static('build'));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(morgan('tiny'))
 
 
