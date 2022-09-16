@@ -32,7 +32,7 @@ app.use(morgan('tiny'))
 
 app.all('/request', async(req, res) =>  {
   try {
-    const subdomain = 'http://' + req.headers.host;
+    const subdomain = 'http://' + req.headers.host + '/request';
     const binKey = await getBinKey(subdomain);
     const reqId = makeHash();
     insertRequest(req, binKey, reqId);
