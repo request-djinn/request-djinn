@@ -53,14 +53,12 @@ app.post('/bin', (req, res) => {
 
 app.get('/bin/:binKey/requests', async(req, res) => {
   const binKey = req.params.binKey;
-
-  Request.find({binKey: binKey}, (error, data) => {
-    if(error) {
-      res.status(400).send({error: error})
-    } else {
-      res.status(200).send({status: 200, requests: data});
-    }
-  })
+  try {
+    let data = await db.getRequests(binKey);
+    res.status(200).send({status: 200, requests: data});
+  } catch(error) {
+    res.status(400).send({error: error})
+  }
 })
 
 app.get('/bin/:binKey', async (req, res) => {

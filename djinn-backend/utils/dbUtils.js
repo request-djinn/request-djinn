@@ -50,4 +50,8 @@ async function getBin(binKey) {
   return await pool.query("SELECT * FROM bins WHERE binKey = $1", [binKey]);
 }
 
-module.exports = { makeHash, parseReqNewBin, getTimeStamp, getBinKey, insertData, insertRequest, getBin }
+async function getRequests(binKey) {
+  return await Request.find({binKey: binKey})
+}
+
+module.exports = { makeHash, parseReqNewBin, getTimeStamp, getBinKey, insertData, insertRequest, getBin, getRequests }
