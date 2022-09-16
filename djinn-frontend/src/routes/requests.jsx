@@ -37,7 +37,6 @@ const Requests = () => {
           <ul className="px-4">
             <li>Created: {bin.createdtime}</li>
             <li>Last: {bin.last}</li>
-            <li>Count: {bin.count}</li>
           </ul>
 
 

@@ -22,13 +22,13 @@ const Home = () => {
     console.log(res.data)
     const oldBin = JSON.parse(localStorage.getItem('bins'));
 
-    if (oldBin.length === 0) {
+    if (!oldBin) {
       localStorage.setItem('bins', JSON.stringify([
         {
           binkey: res.data.binKey,
           createdAt: res.data.createdAt,
-        },
-      ]))
+        }])
+      )
     } else {
       oldBin.push({
         binkey: res.data.binKey,
