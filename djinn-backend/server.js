@@ -60,6 +60,12 @@ app.all('/', async(req, res) =>  {
   }
 });
 
+app.get('/bin/:binKey', async (req, res) => {
+  const binKey = req.params.binKey;
+  const data = await pool.query("SELECT endPoint, createdTime, last, count FROM bins WHERE binKey= $1", [binKey]);
+  res.json(data);
+})
+
 app.get('/bin/:binKey/requests', async(req, res) => {
   // const matchingRequests = await Model.find(binKey: binId);
   const binKey = await req.params.binKey;

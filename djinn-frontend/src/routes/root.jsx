@@ -20,13 +20,22 @@ const Home = () => {
     const res = await binService.createBin()
     showNotification(`Bin created for subdomain: ${res.data.endPoint}. Click 'My Bins' to view`)
     console.log(res.data)
-    localStorage.setItem('bins', JSON.stringify([
-      {
+    const oldBin = localStorage.getItem('bins');
+
+    if (oldBin.length === 0) {
+      localStorage.setItem('bins', JSON.stringify([
+        {
+          binkey: res.data.binKey,
+          createdAt: res.data.createdAt,
+        },
+      ]))
+    } else {
+      oldBin.push(        {
         binkey: res.data.binKey,
         createdAt: res.data.createdAt,
-      },
-    ]))
-
+      })
+      localStorage.setItem('bins', JSON.stringify(oldBin))
+    }
   }
 
   return(
