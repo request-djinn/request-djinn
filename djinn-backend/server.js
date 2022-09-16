@@ -3,11 +3,11 @@ const PORT = 3001;
 
 const express = require('express');
 const mongoose = require('mongoose');
-const morgan = require('morgan')
+const morgan = require('morgan');
 const hash = require('object-hash');
 const bodyParser = require('body-parser');
-
 const cors = require('cors');
+const path = require('path');
 
 const Request = require('./models/binDb.js');
 const { pool } = require("./models/relationalDb.js");
@@ -25,11 +25,11 @@ mongoose.connect(process.env.MONGODB_URL)
   });
 
 app.use(cors());
-app.use(express.static('build'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(morgan('tiny'))
 
+app.use(express.static('build'));
 
 app.post('/bin', (req, res) => {
 
@@ -82,6 +82,11 @@ app.all('/', async(req, res) =>  {
   } catch (error) {
     res.status(400).send({status: 400, error: 'malformed request'});
   }
+});
+
+app.all('/*', (req, res) => {
+  console.log("hit the catchall!")
+  res.sendFile(path.join(__dirname, '/build/index.html'));
 });
 
 app.listen(PORT, () => console.log('App is listening on port 3001'));
