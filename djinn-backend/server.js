@@ -62,8 +62,10 @@ app.get('/bin/:binKey/requests', async(req, res) => {
 })
 
 app.get('/bin/:binKey', async (req, res) => {
+  console.log("I'm getting your bin!")
   const binKey = req.params.binKey;
   const data = await pool.query("SELECT * FROM bins WHERE binKey = $1", [binKey]);
+  console.log(data);
   res.json(data);
 })
 

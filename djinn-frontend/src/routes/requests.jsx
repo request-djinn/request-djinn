@@ -21,21 +21,21 @@ const Requests = () => {
 
     fetchData()
       .then(data => {
-        setBin(data.bin)
+        console.log(data);
+        setBin(data.bin.data.rows[0])
         setRequests(data.requests)
       })
       .catch(error => console.log(error));
   }, [binkey])
   
-  console.log(requests)
 
     return(
       <div>
         <Navigation />
         <div>
-          <h2 className="p-4">Requests for: {bin.subdomain}</h2>
+          <h2 className="p-4">Requests for: {bin.endpoint}</h2>
           <ul className="px-4">
-            <li>Created: {bin.createdAt}</li>
+            <li>Created: {bin.createdtime}</li>
             <li>Last: {bin.last}</li>
             <li>Count: {bin.count}</li>
           </ul>
