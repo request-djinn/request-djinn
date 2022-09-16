@@ -40,7 +40,7 @@ app.all('/request', async (req, res) => {
 app.post('/bin', (req, res) => {
   try {
     const newBinKey = db.makeHash();
-    const endPoint = `http://${db.makeHash()}${BASE_URL}`;
+    const endPoint = `http://${db.makeHash()}${BASE_URL}/request`;
     console.log(endPoint)
     const sqlArr = db.parseReqNewBin(req, newBinKey, endPoint);
     const createdAt = sqlArr[1];
