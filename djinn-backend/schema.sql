@@ -9,8 +9,3 @@ last timestamp,
 count numeric
 );
 
-
--- Sample Data
-INSERT INTO bins (binKey, createdTime, endPoint, last, count)
-    VALUES ('abc123', '2011-10-19 10:23:54', 'www.test.com', '2011-10-19 10:23:54', 1);
-    -- COUNT IS ACTUALLY 0 AT THE BEGINNING
