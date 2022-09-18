@@ -8,4 +8,3 @@ endPoint VARCHAR(100),
 last timestamp,
 count numeric
 );
-
