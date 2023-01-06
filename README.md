@@ -22,7 +22,7 @@ MongoDB and PostgreSQL (Databases to store bins and requests)
 
 #### Active State (online):
 
-Simply visit https://www.request-djinn.com and click the "Create a Bin" button. You'll get a URL for your bin which you can send webhook requests to! You can now view all your requests and metadata at that URL. If you create multiple bins, you can click the "My Bins" button to see a list of your bins. 
+By clicking the "Create a Bin" button, you'll get a URL for your bin which you can send webhook requests to! You can now view all your requests and metadata at that URL. If you create multiple bins, you can click the "My Bins" button to see a list of your bins. 
 
 ![ss2](https://live.staticflickr.com/65535/52365611064_dcfc4a4db8_b.jpg)
 
